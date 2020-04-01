@@ -1,6 +1,7 @@
 add_executable(test-unit "")
 
-target_sources(test-unit
+target_sources(
+		test-unit
 		PRIVATE
 		${CMAKE_CURRENT_LIST_DIR}/gtest_main.cpp
 		)

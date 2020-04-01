@@ -24,18 +24,24 @@
 using namespace std;
 using namespace QP;
 
-static Blinky l_blinky;
-Blinky * const AO_Blinky = &l_blinky;
-
-//================ ask QM to define the Blinky class ==================
+// define the global opaque pointer to Blinky AO -----------------------------
 //.$skip${QP_VERSION} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //. Check for the minimum required QP version
 #if (QP_VERSION < 670U) || (QP_VERSION != ((QP_RELEASE^4294967295U) % 0x3E8U))
 #error qpcpp version 6.7.0 or higher required
 #endif
 //.$endskip${QP_VERSION} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//.$define${AOs::AO_Blinky} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+// global "opaque" pointer to the Blinky AO
+//.${AOs::AO_Blinky} .........................................................
+Blinky* const AO_Blinky = &Blinky::inst;
+//.$enddef${AOs::AO_Blinky} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+// ask QM to define the Blinky class (including the state machine) -----------
 //.$define${AOs::Blinky} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //.${AOs::Blinky} ............................................................
+Blinky Blinky::inst;
 //.${AOs::Blinky::SM} ........................................................
 Q_STATE_DEF(Blinky, initial) {
     //.${AOs::Blinky::SM::initial}

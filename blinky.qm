@@ -8,12 +8,12 @@
   <class name="Blinky" superclass="qpcpp::QActive">
    <!--${AOs::Blinky::m_timeEvt}-->
    <attribute name="m_timeEvt" type="QP::QTimeEvt" visibility="0x02" properties="0x00"/>
-   <!--${AOs::Blinky::cbOn}-->
-   <attribute name="cbOn" type="std::function&lt; void(void) &gt;" visibility="0x02" properties="0x00"/>
-   <!--${AOs::Blinky::cbOff}-->
-   <attribute name="cbOff" type="std::function&lt; void(void) &gt;" visibility="0x02" properties="0x00"/>
    <!--${AOs::Blinky::m_bulb}-->
    <attribute name="m_bulb" type="std::unique_ptr&lt;Bulb&gt;" visibility="0x02" properties="0x00"/>
+   <!--${AOs::Blinky::inst}-->
+   <attribute name="inst" type="Blinky" visibility="0x00" properties="0x01">
+    <documentation>the single instance of Blinky (Singleton)</documentation>
+   </attribute>
    <!--${AOs::Blinky::Blinky}-->
    <operation name="Blinky" type="" visibility="0x00" properties="0x00">
     <documentation>// constructor</documentation>
@@ -78,12 +78,20 @@
     <state_diagram size="34,34"/>
    </statechart>
   </class>
+  <!--${AOs::AO_Blinky}-->
+  <attribute name="AO_Blinky" type="Blinky* const" visibility="0x00" properties="0x00">
+   <documentation>// global &quot;opaque&quot; pointer to the Blinky AO</documentation>
+   <code>= &amp;Blinky::inst;</code>
+  </attribute>
  </package>
  <!--${generate}-->
  <directory name="generate">
   <!--${generate::blinky.hpp}-->
   <file name="blinky.hpp">
-   <text>#include &lt;functional&gt;
+   <text>#ifndef BLINKY_HPP
+#define BLINKY_HPP
+
+#include &lt;functional&gt;
 #include &lt;memory&gt;
 
 #include &quot;qpcpp.hpp&quot;
@@ -94,13 +102,19 @@ using namespace std;
 using namespace QP;
 
 enum BlinkySignals {
-    TIMEOUT_SIG = Q_USER_SIG,
-    MAX_SIG
+    DUMMY_SIG = QP::Q_USER_SIG,
+    MAX_PUB_SIG,          // the last published signal
+
+    TIMEOUT_SIG,
+    MAX_SIG               // the last signal
 };
 
+// ask QM to declare the Blinky class ----------------------------------------
 $declare${AOs::Blinky}
 
-extern Blinky * const AO_Blinky;</text>
+$declare${AOs::AO_Blinky}
+
+#endif // BLINKY_HPP</text>
   </file>
   <!--${generate::blinky.cpp}-->
   <file name="blinky.cpp">
@@ -112,10 +126,10 @@ extern Blinky * const AO_Blinky;</text>
 using namespace std;
 using namespace QP;
 
-static Blinky l_blinky;
-Blinky * const AO_Blinky = &amp;l_blinky;
+// define the global opaque pointer to Blinky AO -----------------------------
+$define${AOs::AO_Blinky}
 
-//================ ask QM to define the Blinky class ==================
+// ask QM to define the Blinky class (including the state machine) -----------
 $define${AOs::Blinky}
 
 </text>

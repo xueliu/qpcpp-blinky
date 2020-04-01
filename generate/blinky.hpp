@@ -16,6 +16,9 @@
 // for more details.
 //
 //.$endhead${generate::blinky.hpp} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+#ifndef BLINKY_HPP
+#define BLINKY_HPP
+
 #include <functional>
 #include <memory>
 
@@ -27,18 +30,23 @@ using namespace std;
 using namespace QP;
 
 enum BlinkySignals {
-    TIMEOUT_SIG = Q_USER_SIG,
-    MAX_SIG
+    DUMMY_SIG = QP::Q_USER_SIG,
+    MAX_PUB_SIG,          // the last published signal
+
+    TIMEOUT_SIG,
+    MAX_SIG               // the last signal
 };
 
+// ask QM to declare the Blinky class ----------------------------------------
 //.$declare${AOs::Blinky} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 //.${AOs::Blinky} ............................................................
 class Blinky : public QP::QActive {
 private:
     QP::QTimeEvt m_timeEvt;
-    std::function< void(void) > cbOn;
-    std::function< void(void) > cbOff;
     std::unique_ptr<Bulb> m_bulb;
+
+public:
+    static Blinky inst;
 
 public:
 
@@ -70,4 +78,10 @@ protected:
 };
 //.$enddecl${AOs::Blinky} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-extern Blinky * const AO_Blinky;
+//.$declare${AOs::AO_Blinky} vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+
+// global "opaque" pointer to the Blinky AO
+extern Blinky* const AO_Blinky;
+//.$enddecl${AOs::AO_Blinky} ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+#endif // BLINKY_HPP
