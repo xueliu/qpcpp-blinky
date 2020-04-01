@@ -13,6 +13,17 @@ find_package(Threads REQUIRED)
 
 find_package(qpcpp-posix CONFIG REQUIRED)
 
+set(BUILD_TEST_UNIT "Build Unit-Tests" ON)
+set(BUILD_TEST_COMP "Build Component Tests" ON)
+set(BUILD_TEST_QUTEST "Build QUTests" ON)
+
+if(BUILD_TEST_UNIT)
+	add_subdirectory(extern/google-test)
+	# enable CTest testing
+	enable_testing()
+	include(test-unit/CMakeLists.txt)
+endif()
+
 set(APP blinky)
 add_executable(${APP} "")
 
